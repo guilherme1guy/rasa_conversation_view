@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block css %}
+<link rel="stylesheet" href="{{url_for('static', filename='css/conversations.css') }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css">
+{% endblock %}
+
+{% block content %}
+  <div class="container" >
+
+    <div class="my-5">
+      <div class="float-right nav" style="display: inline-block;">
+     
+        {% if previous_conversation %}
+          <a href="{{ url_for('conversation_detail', conversation_id=previous_conversation.sender_id) }}"><< Previous</a> 
+        {% endif %}
+    
+        | <a href="{{ url_for('conversation_list') }}">Conversation List </a></li> |
+        
+        {% if next_conversation %} 
+          <a href="{{ url_for('conversation_detail', conversation_id=next_conversation.sender_id) }}">Next >></a>
+        {% else %}
+          Next >>
+        {% endif %}
+       
+      </div>
+      <h3 class="mb-2"> Conversation Details </h3>
+      <p>
+        <strong>ID: </strong>{{conversation.sender_id}} <br>
+        <strong> Date/Time:</strong> {{convert_timestamp(conversation.latest_event_time)}}
+      </p>
+    </div>
+
+    <div class="container">
+      <div class="comments-main pt-4 rounded ml-5"> 
+        <ul class="p-0">
+          {% for event in display_events %}
+            {% if event.sender == 'user'%}
+              <li>
+                <div class="row comments mb-2">
+                  <div class="col-sm-1 text-center user-img">
+                      <img id="profile-photo" src="http://image.flaticon.com/icons/png/512/44/44948.png" class="rounded-circle" />
+                  </div>
+                  <div class="col-sm-10 comment rounded mb-2">
+                    <h4 class="m-0">User</h4>
+                      <time class="ml-3">{{event.date}}</time>
+                      <button class="float-right ml-2" onclick="copyToClipboard( '{{ event.text }}' )"><i class="fas fa-copy"></i></button>
+                      <h4 class="float-right">{{event.intent}} ({{(event.confidence * 100)|round(2, 'floor')}}%)</h4>
+                      <like></like>
+                      <p class="mb-0 text-white">{{event.text}}</p>
+                  </div>
+                </div>
+              </li>
+            {% elif event.sender == 'bot' %}
+              <li>
+                <div class="row comments mb-2 ml-5">
+                  <div class="col-sm-1 text-center user-img">
+                      <img id="profile-photo" src="http://image.flaticon.com/icons/png/512/2410/2410527.png" class="rounded-circle" />
+                  </div>
+                  <div class="col-sm-8 comment rounded mb-2">
+                    <h4 class="m-0">Chatbot</h4>
+                      <time class="ml-3">{{event.date}}</time>
+                      <like></like>
+                      <p class="mb-0 text-white">{{event.text}}</p>
+                  </div>
+                </div>
+              </li>
+            {% endif %}
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+
+  </div>
+{% endblock %}
+
+{% block js %}
+  <script>
+    function copyToClipboard(text) {
+      var $temp = $("<input>");
+      $("body").append($temp);
+      $temp.val(text).select();
+      document.execCommand("copy");
+      $temp.remove();
+    }
+  </script>
+{% endblock %}
+

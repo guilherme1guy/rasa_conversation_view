@@ -1,0 +1,24 @@
+html {
+	height: 100%;
+}
+
+body {
+	background-color: var(--tertiary);
+	height: 100%;
+	display: flex;
+	flex-direction: column;	
+}
+
+h1, h2, h3 {
+    color: var(--primary) !important;
+}
+
+a {
+    color: var(--secondary) !important;
+}
+
+.navbar {
+    padding: 1.5rem 1rem;
+}
+
+

@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block css %}
+<!-- <link rel="stylesheet" href="{{url_for('static', filename='css/conversations.css') }}"> -->
+{% endblock %}
+
+{% block content %}
+
+  <div class="container">
+
+    <div>
+
+      <div class="float-right">
+        <input id="search" type="text" placeholder="Search...">
+        <button id='search_go' class="btn btn-primary" >SEARCH</button>
+      </div>
+
+      <h3 class="my-5"> Conversation List </h3>
+
+    </div>
+
+    
+
+    <table class="table" style="width:100%">
+      <thead>
+        <tr>
+          <th>Date/Time</th>
+          <th>Messages</th>
+          <th>ID</th>
+        </tr>
+      </thead>
+      
+      {% for conv in conversations %}
+        <tr>
+          <td>{{conv.date}}</td>
+          <td>{{conv.event_count}}</td>
+          <td>
+            <a href="{{ url_for('conversation_detail', conversation_id=conv.sender_id) }}">{{conv.sender_id}} </a>
+          </td>
+        </tr>
+      {% endfor %}
+
+    </table>
+    {{ pagination.info }}
+    {{ pagination.links }}
+    
+  </div>
+
+{% endblock %}
+
+
+{% block js %}
+
+<script>
+
+  $(document).ready(function () {
+    let url = new URL(window.location.href);
+    $('#search').val(url.searchParams.get('q'));  
+  });
+
+  $('#search').on('keyup', function(event) {
+    if (event.keyCode === 13) { //if 'enter'
+      event.preventDefault();
+      $('#search_go').click();
+    }
+  });
+
+  $('#search_go').on('click', function() {
+    let url = new URL(window.location.href);
+
+    if (url.searchParams.has('q')) {
+      url.searchParams.delete('q');
+    }
+
+    url.searchParams.append('q', $('#search').val());
+
+    location.replace(url);
+  });
+
+</script>
+
+
+{% endblock %}

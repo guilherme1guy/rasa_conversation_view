@@ -1,0 +1,67 @@
+
+thead {
+    background-color: var(--secondary);
+}
+
+.comments-main ul li{
+    list-style: none;
+}
+.comments .comment {
+    padding: 5px 10px;
+    background: var(--secondary);
+}
+.comments .comment time{
+    color: var(--quaternary);
+    font-size: small;
+}
+.comments .user-img img {
+    width: 50px;
+    height: 50px;
+}
+.comments .comment h4 {
+    display: inline-block;
+    font-size: 16px;
+}
+.comments .comment h4 {
+    color: var(--quaternary);
+    text-decoration: none;
+}
+
+.comments .comment p {
+    font-size: 15px;
+    padding: 8px;
+}
+.comments .comment p .reply {
+    color: #BFBFA8;
+    cursor: pointer;
+}
+.comments .comment .active {
+    opacity: 1;
+}
+
+.comments .comment button {
+    background: none !important;
+    border: none;
+    padding: 0 !important;
+    cursor: pointer;
+}
+
+.nav a {
+    color: var(--secondary);
+}
+
+.pagination-page-info {
+    padding: .6em;
+    padding-left: 0;
+    width: 40em;
+    margin: .5em;
+    margin-left: 0;
+    font-size: 12px;
+}
+.pagination-page-info b {
+    color: black;
+    background: white;
+    padding-left: 2px;
+    padding: .1em .25em;
+    font-size: 150%;
+}
