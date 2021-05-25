@@ -81,25 +81,25 @@
   </script>
 
   <script>!(function () {
-    // https://github.com/botfront/rasa-webchat
-    let e = document.createElement("script"),
-      t = document.head || document.getElementsByTagName("head")[0];
-    (e.src =
-      "https://cdn.jsdelivr.net/npm/rasa-webchat/lib/index.js"),
-      (e.async = !0),
-      (e.onload = () => {
-        window.WebChat.default(
-          {
-            socketUrl: '{{ socket_url }}',
-            params: {
-              storage: "session"
+      // https://github.com/botfront/rasa-webchat
+      let e = document.createElement("script"),
+        t = document.head || document.getElementsByTagName("head")[0];
+      (e.src =
+        "{{ js_src }}"),
+        (e.async = !0),
+        (e.onload = () => {
+          window.WebChat.default(
+            {
+              socketUrl: '{{ socket_url }}',
+              params: {
+                storage: "session"
+              },
             },
-          },
-          null
-        );
-      }),
-      t.insertBefore(e, t.firstChild);
-  })();
+            null
+          );
+        }),
+        t.insertBefore(e, t.firstChild);
+    })();
   </script>
 
   <script>

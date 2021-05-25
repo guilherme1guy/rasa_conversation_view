@@ -25,6 +25,9 @@ Rasa saves the timestamp as UTC, set this to something else, like "America/Sao_P
 We use [Rasa Webchat](https://github.com/botfront/rasa-webchat) to talk to your bot. SOCKET_URL must be available to the user since the connection happens on the client-side. If SOCKET_URL is unset or empty, webchat will be deactivated:
 - SOCKET_URL
 
+You can specify a version for Webchat using:
+- JS_SRC
+
 # Authors:
 
 - [Guilherme Guy](https://github.com/guilherme1guy) 
