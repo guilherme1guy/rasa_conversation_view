@@ -90,6 +90,7 @@
         (e.onload = () => {
           window.WebChat.default(
             {
+              initPayload: '{{ init_payload }}',
               socketUrl: '{{ socket_url }}',
               params: {
                 storage: "session"

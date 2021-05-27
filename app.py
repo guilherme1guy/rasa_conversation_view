@@ -13,6 +13,7 @@ import os
 app = Flask(__name__, static_url_path='')
 app.config['ENV_TITLE'] = os.getenv('ENV_TITLE')
 
+
 def get_db():
     client = MongoClient(
         host=os.getenv('MONGO_URL'),
@@ -24,14 +25,15 @@ def get_db():
 
 
 def get_date_from_timestamp(timestamp):
-    
+
     date = datetime.utcfromtimestamp(timestamp)
     date.replace(tzinfo=pytz.timezone('UTC'))
     date = date.astimezone(
         pytz.timezone(os.getenv('TIMEZONE', 'UTC'))
     )
-    
+
     return date
+
 
 def pretty_date(date):
     return date.strftime('%Y-%m-%d  ~  %H:%M:%S')
@@ -54,7 +56,7 @@ def root():
 
 @app.route('/conversations')
 def conversation_list():
-    
+
     per_page = 10
     page = request.args.get(get_page_parameter(), type=int, default=1)
 
@@ -69,22 +71,25 @@ def conversation_list():
 
         # {"events.parse_data.intent.name": {$regex : ".*<intent_name>*"}}
         # {"events.text": {$regex : ".*<search text>.*"}}
-        # {$or: [<q1>, <q2> ...]} 
+        # {$or: [<q1>, <q2> ...]}
         query = {'$or':
-            [
-                {'events.parse_data.intent.name': {'$regex' : f'.*{q}*'}},
-                {'events.text': {'$regex' : f'.*{q}.*'}}
-            ]
-        }
+                 [
+                     {'events.parse_data.intent.name': {'$regex': f'.*{q}*'}},
+                     {'events.text': {'$regex': f'.*{q}.*'}},
+                     # only match conversations with an event
+                     {'events.0': {'$exists': True}}
+                 ]
+                 }
 
-
-    conversations_from_db = db['conversations'].find(query).sort('latest_event_time', DESCENDING)
-    current_page_conversations = conversations_from_db.skip((page - 1) * per_page).limit(per_page)
+    conversations_from_db = db['conversations'].find(
+        query).sort('latest_event_time', DESCENDING)
+    current_page_conversations = conversations_from_db.skip(
+        (page - 1) * per_page).limit(per_page)
 
     def count_messages(events):
-    
+
         count = 0
-    
+
         for event in events:
             if (event['event'] == 'user' or event['event'] == 'bot') and event['text'] != None:
                 count += 1
@@ -104,16 +109,18 @@ def conversation_list():
 
     pagination = Pagination(
         page=page, total=conversations_from_db.count(),
-        per_page=per_page, 
+        per_page=per_page,
         search=search, record_name='conversations',
         css_framework='bootstrap4')
-   
+
     return render_template(
         'conversation_list.html',
         socket_url=os.getenv('SOCKET_URL', ''),
         conversations=conversations,
         pagination=pagination,
-        js_src=os.getenv('JS_SRC', 'https://cdn.jsdelivr.net/npm/rasa-webchat/lib/index.js')   
+        js_src=os.getenv(
+            'JS_SRC', 'https://cdn.jsdelivr.net/npm/rasa-webchat/lib/index.js'),
+        init_payload=os.getenv('INIT_PAYLOAD', '')
     )
 
 
@@ -137,7 +144,7 @@ def conversation_detail(conversation_id):
     next_conversation_search = all_conversations\
         .find({'latest_event_time': {'$gt': conversation['latest_event_time']}})\
         .sort('latest_event_time', ASCENDING).limit(1)
-    
+
     try:
         next_conversation = next_conversation_search[0]
     except (InvalidOperation, IndexError):
@@ -146,7 +153,7 @@ def conversation_detail(conversation_id):
     display_events = []
 
     def get_common_data(event):
-        
+
         evt = {
             'sender': event['event'],
             'text': event['text'],
@@ -155,11 +162,10 @@ def conversation_detail(conversation_id):
 
         return evt
 
+    def get_user_event(event):
 
-    def get_user_event(event):           
-      
         evt = get_common_data(event)
-        
+
         try:
             evt['intent'] = event['parse_data']['intent']['name']
             evt['confidence'] = event['parse_data']['intent']['confidence']
@@ -168,11 +174,10 @@ def conversation_detail(conversation_id):
             evt['confidence'] = 1
 
         return evt
-        
 
     def get_bot_event(event):
 
-        evt = get_common_data(event) 
+        evt = get_common_data(event)
         evt['metadata'] = event['metadata']
 
         return evt
@@ -184,15 +189,15 @@ def conversation_detail(conversation_id):
 
     for event in conversation['events']:
 
-        evt_type = event['event'] 
+        evt_type = event['event']
 
         if evt_type in filters:
-            
+
             evt = filters[evt_type](event)
 
             if evt['text'] is not None:
                 display_events.append(evt)
-   
+
     return render_template(
         'conversation_detail.html',
         conversation=conversation,
@@ -200,5 +205,7 @@ def conversation_detail(conversation_id):
         previous_conversation=previous_conversation,
         next_conversation=next_conversation,
         display_events=display_events,
-        js_src=os.getenv('JS_SRC', 'https://cdn.jsdelivr.net/npm/rasa-webchat/lib/index.js') 
+        js_src=os.getenv(
+            'JS_SRC', 'https://cdn.jsdelivr.net/npm/rasa-webchat/lib/index.js'),
+        init_payload=os.getenv('INIT_PAYLOAD', '')
     )

@@ -28,6 +28,9 @@ We use [Rasa Webchat](https://github.com/botfront/rasa-webchat) to talk to your 
 You can specify a version for Webchat using:
 - JS_SRC
 
+Its possible to pass an initial payload (as a simulated user message) for the chatbot through:
+- INIT_PAYLOAD
+
 # Authors:
 
 - [Guilherme Guy](https://github.com/guilherme1guy) 
