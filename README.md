@@ -12,8 +12,6 @@ You can change these environment variables to configure this application:
 
 Mongo settings:
 - MONGO_URL
-- MONGO_USER
-- MONGO_PASSWORD
 - DB_NAME
 
 Page title:

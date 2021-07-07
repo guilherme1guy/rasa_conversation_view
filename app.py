@@ -16,9 +16,7 @@ app.config['ENV_TITLE'] = os.getenv('ENV_TITLE')
 
 def get_db():
     client = MongoClient(
-        host=os.getenv('MONGO_URL'),
-        username=os.getenv('MONGO_USER'),
-        password=os.getenv('MONGO_PASSWORD')
+        host=os.getenv('MONGO_URL')
     )
 
     return client[os.getenv('DB_NAME')]
